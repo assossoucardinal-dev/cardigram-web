@@ -1,173 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2aabee">
-  <title>Cardigram</title>
-  <style>
-    :root { --blue:#2aabee; --blue-dark:#229ed9; --text:#202124; --muted:#687386; --line:#e7eaf0; --bg:#fff; }
-    * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .screen { min-height:100vh; display:none; }
-    .screen.active { display:flex; }
-    .auth { align-items:center; justify-content:center; flex-direction:column; padding:24px 20px 40px; }
-    .brand-mark { width:158px; height:158px; margin:0 0 16px; filter:drop-shadow(0 8px 18px rgba(42,171,238,.12)); }
-    h1 { font-size:34px; line-height:1; margin:18px 0 14px; letter-spacing:-.8px; }
-    .subtitle { width:min(420px,100%); min-height:48px; margin:0 0 24px; text-align:center; color:#556170; font-size:17px; line-height:1.45; }
-    .auth-form { width:min(420px,100%); }
-    .field { position:relative; height:74px; margin:10px 0 18px; }
-    .field label { position:absolute; z-index:2; left:13px; top:-7px; padding:0 5px; background:white; color:var(--blue); font-size:13px; }
-    .field input, .field select { width:100%; height:56px; margin-top:12px; padding:0 16px; border:2px solid #55b9f5; border-radius:12px; background:white; color:var(--text); font-size:18px; outline:none; }
-    .field input:focus, .field select:focus { border-color:var(--blue-dark); box-shadow:0 0 0 4px rgba(42,171,238,.12); }
-    .phone-row { display:grid; grid-template-columns:82px 1fr; }
-    .phone-row input:first-child { border-right:0; border-radius:12px 0 0 12px; text-align:center; }
-    .phone-row input:last-child { border-radius:0 12px 12px 0; }
-    .check-row { display:flex; align-items:center; gap:12px; margin:8px 0 24px; }
-    .check-row input { width:22px; height:22px; accent-color:var(--blue); }
-    .check-row span { font-size:17px; }
-    .primary { width:100%; height:52px; border:0; border-radius:12px; background:var(--blue); color:white; font-size:17px; font-weight:700; cursor:pointer; }
-    .primary:active { background:var(--blue-dark); transform:scale(.995); }
-    .link { border:0; background:none; color:var(--blue-dark); font-size:15px; cursor:pointer; }
-    .code-row { display:flex; justify-content:center; gap:10px; }
-    .code-row input { width:54px; height:58px; border:2px solid #55b9f5; border-radius:12px; text-align:center; font-size:24px; outline:none; }
-
-    .app { min-height:100vh; display:none; background:#f6f8fb; }
-    .app.active { display:block; padding-bottom:76px; }
-    .topbar { position:sticky; z-index:10; top:0; height:62px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:white; border-bottom:1px solid var(--line); }
-    .logo-mini { display:flex; align-items:center; gap:9px; color:var(--text); font-size:20px; font-weight:800; }
-    .logo-mini svg { width:38px; height:38px; }
-    .icon-button { width:42px; height:42px; border:0; border-radius:50%; background:#edf6fc; color:var(--blue-dark); font-size:20px; cursor:pointer; }
-    .feed { width:min(560px,100%); margin:0 auto; padding:14px; }
-    .composer, .card { margin-bottom:12px; border-radius:16px; background:white; box-shadow:0 2px 12px rgba(32,33,36,.06); }
-    .composer { display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; padding:12px; }
-    .avatar { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:#e7f5fd; color:var(--blue-dark); font-weight:800; }
-    .composer input { height:44px; border:0; border-radius:22px; padding:0 16px; background:#f3f5f7; outline:none; }
-    .send { width:44px; height:44px; border:0; border-radius:50%; background:var(--blue); color:white; font-size:18px; }
-    .card-header { display:flex; align-items:center; gap:10px; padding:12px 12px 8px; }
-    .card-header div { flex:1; }
-    .card-name { font-weight:800; }
-    .card-time { color:var(--muted); font-size:13px; }
-    .card-body { padding:4px 12px 12px; line-height:1.45; }
-    .card-actions { height:48px; display:flex; align-items:center; gap:6px; border-top:1px solid var(--line); }
-    .action { flex:1; height:100%; border:0; background:white; color:#596579; cursor:pointer; }
-    .action.liked { color:#ef3f76; }
-    .bottom-nav { position:fixed; z-index:20; bottom:0; left:0; right:0; height:68px; display:flex; background:white; border-top:1px solid var(--line); }
-    .nav-item { flex:1; border:0; background:white; color:#7b8492; font-size:11px; cursor:pointer; }
-    .nav-item span { display:block; font-size:21px; margin-bottom:3px; }
-    .nav-item.active { color:var(--blue); }
-    .toast { position:fixed; z-index:50; left:50%; bottom:82px; transform:translate(-50%,20px); padding:12px 18px; border-radius:10px; background:#202124; color:white; opacity:0; pointer-events:none; transition:.25s; }
-    .toast.show { opacity:1; transform:translate(-50%,0); }
-    @media (min-width:700px) { .brand-mark { width:180px; height:180px; } }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0866ff">
+<title>Cardigram</title>
+<style>
+:root{--blue:#0866ff;--bg:#f0f2f5;--card:#fff;--text:#050505;--muted:#65676b;--line:#dddfe2;--red:#ef3f76;--green:#31a24c}.dark{--bg:#18191a;--card:#242526;--text:#e4e6eb;--muted:#b0b3b8;--line:#3a3b3c}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-box{width:min(430px,100%);text-align:center}.brand-auth{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}.brand-auth strong{font-size:32px;color:var(--blue)}.brand-auth svg{width:58px;height:58px}.auth-card{padding:18px;border-radius:12px;background:var(--card);text-align:left;box-shadow:0 12px 34px #0002}.auth-card h1{margin:0 0 6px;font-size:24px}.auth-card p{color:var(--muted);margin:0 0 15px}.field{margin:12px 0}.field label{display:block;margin-bottom:6px;font-size:13px;font-weight:700}.field input,.field select{width:100%;height:50px;padding:0 13px;border:1px solid #ccd0d5;border-radius:8px;background:var(--card);color:var(--text);outline:none}.phone{display:grid;grid-template-columns:130px 1fr}.phone select{border-radius:8px 0 0 8px;border-right:0}.phone input{border-radius:0 8px 8px 0}.check{display:flex;align-items:center;gap:8px;margin:12px 0}.check input{accent-color:var(--blue)}.primary{width:100%;height:48px;border:0;border-radius:8px;background:var(--blue);color:#fff;font-size:17px;font-weight:700}.code-box{display:flex;gap:7px}.code-box input{width:16.66%;height:58px;text-align:center;border:1px solid #ccd0d5;border-radius:8px;font-size:23px;background:var(--card);color:var(--text)}.notice{margin-top:12px;padding:10px;border-radius:8px;background:#fff4ce;color:#604800;font-size:12px}.lang-row{display:flex;justify-content:flex-end}.lang-row select{border:0;background:transparent;color:var(--blue)}
+.header{position:fixed;z-index:30;top:0;left:0;right:0;height:56px;display:flex;align-items:center;background:var(--card);border-bottom:1px solid var(--line)}.brand-mini{display:flex;align-items:center;gap:8px;width:275px;padding-left:16px;font-weight:800}.mini-logo{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:white}.search{width:220px;height:40px;border:0;border-radius:20px;padding:0 15px;background:var(--bg);color:var(--text)}.top-tabs{position:absolute;left:300px;right:300px;display:flex;justify-content:center}.top-tab{width:110px;height:56px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);font-size:22px}.top-tab.active{color:var(--blue);border-bottom-color:var(--blue)}.top-actions{margin-left:auto;display:flex;gap:8px;padding-right:12px}.round{width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);color:var(--text)}
+.layout{max-width:1380px;margin:56px auto 0;display:grid;grid-template-columns:240px minmax(420px,680px) 280px;justify-content:center;gap:24px}.side{position:sticky;top:72px;height:calc(100vh - 72px);padding:12px 6px}.right{position:sticky;top:72px;height:calc(100vh - 72px);padding-top:12px}.feed{width:680px;padding:14px 0}.side-link,.contact{width:100%;height:44px;display:flex;align-items:center;gap:10px;border:0;border-radius:8px;background:none;color:var(--text);padding:5px}.side-link:hover,.contact:hover{background:#00000010}.side-icon,.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e7f3ff;color:var(--blue);font-weight:800}.right-card,.card-box{border-radius:9px;background:var(--card);margin-bottom:14px;padding:12px;box-shadow:0 1px 2px #0002}.right-card h3{margin:4px 0;color:var(--muted)}
+.stories{display:flex;gap:8px;overflow-x:auto}.story{position:relative;min-width:150px;height:230px;border:0;border-radius:10px;color:white;text-align:left;overflow:hidden;background:linear-gradient(145deg,#75b7ff,#7259d1)}.story:nth-child(2n){background:linear-gradient(145deg,#ff8066,#c23b63)}.story:nth-child(3n){background:linear-gradient(145deg,#42b7a1,#2176a3)}.story-avatar{position:absolute;top:10px;left:10px;width:40px;height:40px;border:4px solid var(--blue);border-radius:50%;display:grid;place-items:center;background:white;color:var(--blue)}.story-name{position:absolute;left:12px;right:12px;bottom:12px;font-weight:700}.composer-head{display:flex;align-items:center;gap:8px}.composer-input{height:42px;flex:1;border:0;border-radius:21px;padding:0 14px;background:var(--bg);color:var(--text);outline:none}.composer-actions{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:10px;padding-top:8px}.composer-actions button{height:38px;border:0;border-radius:7px;background:none;color:var(--muted)}
+.post-header{display:flex;align-items:center;gap:9px}.post-meta{flex:1}.post-meta strong{display:block}.post-meta small{color:var(--muted)}.post-more{border:0;background:none;color:var(--muted);font-size:20px}.post-text{margin:12px 0}.post-media{min-height:240px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#dceaff,#f1ddff);color:#526172;font-size:22px;font-weight:700}.post-stats{display:flex;justify-content:space-between;padding:9px 0;color:var(--muted);font-size:13px}.post-actions{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}.post-actions button{height:42px;border:0;background:none;color:var(--muted);font-weight:600}.post-actions .liked{color:var(--blue)}.comment-row{display:flex;gap:7px;padding-top:9px}.comment-row input{flex:1;height:38px;border:0;border-radius:19px;padding:0 12px;background:var(--bg);color:var(--text)}.comments{padding:8px 0 0}.comment{display:flex;gap:7px;margin-top:7px}.comment-bubble{padding:7px 10px;border-radius:14px;background:var(--bg)}
+.modal-backdrop{position:fixed;z-index:50;inset:0;display:grid;place-items:center;background:#ffffffaa}.dark .modal-backdrop{background:#0009}.modal{width:min(520px,calc(100% - 24px));border-radius:10px;background:var(--card);box-shadow:0 10px 40px #0004}.modal-head{height:58px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);font-weight:700}.modal-close{position:absolute;right:calc(50% - 245px);width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);color:var(--text)}.modal-body{padding:15px}.modal textarea{width:100%;height:150px;border:0;resize:none;outline:none;background:var(--card);color:var(--text);font-size:19px}.bottom-nav{display:none}.toast{position:fixed;z-index:80;left:50%;bottom:25px;transform:translate(-50%,20px);padding:12px 18px;border-radius:8px;background:#050505;color:white;opacity:0;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+[dir=rtl] .phone select{border-radius:0 8px 8px 0;border-left:0;border-right:1px solid #ccd0d5}[dir=rtl] .phone input{border-radius:8px 0 0 8px}
+@media(max-width:1100px){.layout{grid-template-columns:170px minmax(420px,680px)}.right{display:none}.top-tabs{left:300px;right:150px}.top-tab{width:85px}}
+@media(max-width:760px){.header{height:52px}.brand-mini{width:auto}.brand-mini span{display:none}.search{display:none}.top-tabs{display:none}.top-actions{margin-left:auto}.layout{display:block;margin-top:52px}.side,.right{display:none}.feed{width:100%;padding:8px}.stories{padding:8px}.story{min-width:120px;height:180px}.bottom-nav{position:fixed;z-index:40;bottom:0;left:0;right:0;height:58px;display:flex;background:var(--card);border-top:1px solid var(--line)}.bottom-nav button{flex:1;border:0;background:none;color:var(--muted);font-size:20px}.bottom-nav button.active{color:var(--blue)}.post-media{min-height:220px}.auth-card{padding:14px}}
+</style>
 </head>
 <body>
-  <section class="screen auth active" id="phone-screen">
-    <svg class="brand-mark" viewBox="0 0 240 240" aria-label="Cardigram">
-      <circle cx="120" cy="120" r="112" fill="#2AABEE"/><path d="M58 120c33-15 66-30 112-48 7-3 12 2 10 10l-20 92c-2 8-10 9-16 4l-43-32-21 20c-4 4-7 6-12 5l8-34-18-17Z" fill="#fff"/><path d="M83 140l67-55-48 63-19 9Z" fill="#BFE8FF"/>
-    </svg>
-    <h1>Cardigram</h1>
-    <p class="subtitle">Veuillez confirmer votre pays puis entrer votre numéro de téléphone.</p>
-    <form class="auth-form" id="phone-form">
-      <div class="field">
-        <label for="country">Pays</label>
-        <select id="country"><option value="+33">France</option><option value="+1">États-Unis / Canada</option><option value="+44">Royaume-Uni</option><option value="+221">Sénégal</option><option value="+225">Côte d'Ivoire</option><option value="+228">Togo</option><option value="+237">Cameroun</option><option value="+33">Belgique</option></select>
-      </div>
-      <div class="field">
-        <label for="phone">Votre numéro de téléphone</label>
-        <div class="phone-row"><input id="dial" value="+33" readonly aria-label="Indicatif"><input id="phone" inputmode="tel" autocomplete="tel" placeholder="6 12 34 56 78" required></div>
-      </div>
-      <label class="check-row"><input type="checkbox" checked><span>Rester connecté</span></label>
-      <button class="primary" type="submit">Continuer</button>
-    </form>
-  </section>
-
-  <section class="screen auth" id="code-screen">
-    <svg class="brand-mark" viewBox="0 0 240 240" aria-label="Cardigram"><circle cx="120" cy="120" r="112" fill="#2AABEE"/><path d="M58 120c33-15 66-30 112-48 7-3 12 2 10 10l-20 92c-2 8-10 9-16 4l-43-32-21 20c-4 4-7 6-12 5l8-34-18-17Z" fill="#fff"/><path d="M83 140l67-55-48 63-19 9Z" fill="#BFE8FF"/></svg>
-    <h1>Vérification</h1>
-    <p class="subtitle" id="code-subtitle">Entrez le code de vérification envoyé sur votre téléphone.</p>
-    <form class="auth-form" id="code-form">
-      <div class="code-row">
-        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 1">
-        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 2">
-        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 3">
-        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 4">
-        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 5">
-      </div>
-      <button class="primary" type="submit" style="margin-top:28px">Valider le code</button>
-      <div style="text-align:center;margin-top:16px"><button class="link" type="button" id="back-phone">Modifier le numéro</button></div>
-    </form>
-  </section>
-
-  <main class="app" id="app">
-    <header class="topbar">
-      <div class="logo-mini">
-        <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#2AABEE"/><path d="M14 32c9-4 18-8 31-13 2-1 4 1 3 3l-6 26c-1 2-3 3-5 1l-12-9-6 6c-1 1-2 2-3 2l2-10-5-5Z" fill="#fff"/></svg>
-        Cardigram
-      </div>
-      <button class="icon-button" aria-label="Rechercher">⌕</button>
-    </header>
-    <section class="feed">
-      <div class="composer">
-        <div class="avatar" id="profile-avatar">C</div>
-        <input id="post-input" placeholder="Quoi de neuf ?">
-        <button class="send" id="send-post" aria-label="Publier">➤</button>
-      </div>
-      <article class="card">
-        <div class="card-header"><div class="avatar">M</div><div><div class="card-name">Mina Card</div><div class="card-time">À l'instant</div></div><button class="link">•••</button></div>
-        <div class="card-body">Bienvenue sur Cardigram ! Partagez vos moments préférés avec vos amis.</div>
-        <div class="card-actions"><button class="action like">♡ J'aime</button><button class="action">○ Commenter</button><button class="action">↗ Partager</button></div>
-      </article>
-    </section>
-    <nav class="bottom-nav"><button class="nav-item active"><span>⌂</span>Accueil</button><button class="nav-item"><span>⌕</span>Recherche</button><button class="nav-item"><span>＋</span>Créer</button><button class="nav-item"><span>♧</span>Profil</button></nav>
-  </main>
-  <div class="toast" id="toast"></div>
-
-  <script>
-    const phoneScreen = document.getElementById('phone-screen');
-    const codeScreen = document.getElementById('code-screen');
-    const app = document.getElementById('app');
-    const country = document.getElementById('country');
-    const dial = document.getElementById('dial');
-    const toast = document.getElementById('toast');
-
-    country.addEventListener('change', () => { dial.value = country.value; });
-    document.getElementById('phone-form').addEventListener('submit', (event) => {
-      event.preventDefault();
-      const phone = document.getElementById('phone').value.trim();
-      if (!phone) return;
-      document.getElementById('code-subtitle').textContent = `Entrez le code envoyé au ${dial.value} ${phone}.`;
-      phoneScreen.classList.remove('active'); codeScreen.classList.add('active');
-    });
-    document.getElementById('back-phone').addEventListener('click', () => { codeScreen.classList.remove('active'); phoneScreen.classList.add('active'); });
-
-    const codeInputs = [...document.querySelectorAll('.code-row input')];
-    codeInputs.forEach((input, index) => {
-      input.addEventListener('input', () => { input.value = input.value.replace(/\D/g,''); if (input.value && codeInputs[index+1]) codeInputs[index+1].focus(); });
-      input.addEventListener('keydown', (event) => { if (event.key === 'Backspace' && !input.value && codeInputs[index-1]) codeInputs[index-1].focus(); });
-    });
-    document.getElementById('code-form').addEventListener('submit', (event) => {
-      event.preventDefault();
-      codeScreen.classList.remove('active'); app.classList.add('active');
-      localStorage.setItem('cardigram_session', 'verified');
-    });
-
-    if (localStorage.getItem('cardigram_session') === 'verified') { phoneScreen.classList.remove('active'); app.classList.add('active'); }
-
-    document.querySelectorAll('.like').forEach(button => button.addEventListener('click', () => { button.classList.toggle('liked'); button.textContent = button.classList.contains('liked') ? '♥ J’aime' : '♡ J’aime'; }));
-    document.getElementById('send-post').addEventListener('click', () => {
-      const input = document.getElementById('post-input');
-      const text = input.value.trim();
-      if (!text) { showToast('Écrivez quelque chose'); return; }
-      const card = document.createElement('article'); card.className = 'card';
-      card.innerHTML = '<div class="card-header"><div class="avatar">C</div><div><div class="card-name">Vous</div><div class="card-time">À l\'instant</div></div></div><div class="card-body"></div><div class="card-actions"><button class="action like">♡ J\'aime</button><button class="action">○ Commenter</button><button class="action">↗ Partager</button></div>';
-      card.querySelector('.card-body').textContent = text;
-      card.querySelector('.like').addEventListener('click', function(){ this.classList.toggle('liked'); this.textContent = this.classList.contains('liked') ? '♥ J’aime' : '♡ J’aime'; });
-      document.querySelector('.feed').insertBefore(card, document.querySelector('.card'));
-      input.value = ''; showToast('Publication créée');
-    });
-    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); item.classList.add('active'); }));
-    function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800); }
-  </script>
-</body>
-</html>
+<section id="auth" class="auth"><div class="auth-box"><div class="brand-auth"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#0866ff"/><path d="M16 33c8-4 17-8 31-13 2-1 4 1 3 3l-7 26c-1 3-4 3-6 1l-10-9-6 6c-1 1-2 2-3 1l2-10-4-5Z" fill="#fff"/></svg><strong>Cardigram</strong></div>
+<div class="auth-card" id="phone-card"><div class="lang-row"><select id="language" aria-label="Language"><option value="fr">Français</option><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ar">العربية</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="tr">Türkçe</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="ru">Русский</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="sw">Kiswahili</option></select></div><h1 data-t="login">Se connecter à Cardigram</h1><p data-t="intro">Choisissez votre pays et entrez votre numéro.</p><form id="phone-form"><div class="field"><label data-t="country">Pays</label><select id="country"><option value="FR" data-dial="33">France (+33)</option></select></div><div class="field"><label data-t="phone">Numéro de téléphone</label><div class="phone"><select id="dial"></select><input id="phone" inputmode="tel" autocomplete="tel" required placeholder="6 12 34 56 78"></div></div><label class="check"><input type="checkbox" checked><span data-t="keep">Rester connecté</span></label><button class="primary" data-t="continue">Continuer</button><div class="notice" data-t="demo">Prototype : aucun SMS n’est envoyé pour le moment.</div></form></div>
+<div class="auth-card hidden" id="code-card"><h1 data-t="verify">Vérification</h1><p id="code-number"></p><form id="code-form"><div class="code-box"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"></div><button class="primary" style="margin-top:14px" data-t="validate">Valider</button><div style="text-align:center;margin-top:10px"><button type="button" id="change-number" style="border:0;background:none;color:var(--blue)" data-t="change">Changer de numéro</button></div></form></div></div></section>
+<section id="app" class="hidden"><header class="header"><div class="brand-mini"><div class="mini-logo">C</div><span>Cardigram</span></div><input class="search" id="global-search" placeholder="Rechercher"><nav class="top-tabs"><button class="top-tab active">⌂</button><button class="top-tab">▣</button><button class="top-tab">◎</button><button class="top-tab">♚</button></nav><div class="top-actions"><button class="round" id="create-short">＋</button><button class="round" id="notify">◉</button><button class="round" id="theme">◐</button><button class="round">C</button></div></header>
+<div class="layout"><aside class="side"><button class="side-link"><span class="side-icon">C</span><strong data-t="profile">Mon profil</strong></button><button class="side-link"><span class="side-icon">♟</span><strong data-t="friends">Amis</strong></button><button class="side-link"><span class="side-icon">◷</span><strong data-t="memories">Souvenirs</strong></button><button class="side-link"><span class="side-icon">◫</span><strong data-t="saved">Enregistrés</strong></button><button class="side-link"><span class="side-icon">◎</span><strong data-t="groups">Groupes</strong></button></aside>
+<main class="feed"><section class="card-box stories"><button class="story"><div class="story-avatar">+</div><div class="story-name" data-t="story">Créer une story</div></button><button class="story"><div class="story-avatar">A</div><div class="story-name">Amina</div></button><button class="story"><div class="story-avatar">J</div><div class="story-name">Jean</div></button><button class="story"><div class="story-avatar">M</div><div class="story-name">Mariam</div></button></section>
+<section class="card-box"><div class="composer-head"><div class="avatar">C</div><input id="quick-post" class="composer-input" placeholder="Quoi de neuf ?"></div><div class="composer-actions"><button id="open-post">▣ <span data-t="photo">Photo / vidéo</span></button><button id="feeling">☺ <span data-t="feeling">Humeur</span></button><button id="location">⌖ <span data-t="location">Lieu</span></button></div></section><section id="posts"></section></main>
+<aside class="right"><div class="right-card"><h3 data-t="contacts">Contacts</h3><div class="contact"><div class="avatar">A</div><strong>Amina</strong></div><div class="contact"><div class="avatar">J</div><strong>Jean</strong></div><div class="contact"><div class="avatar">M</div><strong>Mariam</strong></div><div class="contact"><div class="avatar">S</div><strong>Samuel</strong></div></div></aside></div>
+<nav class="bottom-nav"><button class="active">⌂</button><button>▣</button><button id="mobile-create">＋</button><button>◉</button><button>≡</button></nav></section>
+<div id="post-modal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head" data-t="createPost">Créer une publication</div><button class="modal-close" id="close-post">×</button><div class="modal-body"><textarea id="post-text" placeholder="Quoi de neuf ?"></textarea><button class="primary" id="publish-post" data-t="publish">Publier</button></div></div></div><div id="story-modal" class="modal-backdrop hidden"><div class="modal"><div class="modal-head" data-t="createStory">Créer une story</div><button class="modal-close" id="close-story">×</button><div class="modal-body"><textarea id="story-text" placeholder="Texte de votre story"></textarea><button class="primary" id="publish-story" data-t="publish">Publier</button></div></div></div><div class="toast" id="toast"></div>
+<script>
+const T={fr:{login:'Se connecter à Cardigram',intro:'Choisissez votre pays et entrez votre numéro.',country:'Pays',phone:'Numéro de téléphone',keep:'Rester connecté',continue:'Continuer',demo:'Prototype : aucun SMS n’est envoyé.',verify:'Vérification',validate:'Valider',change:'Changer de numéro',profile:'Mon profil',friends:'Amis',memories:'Souvenirs',saved:'Enregistrés',groups:'Groupes',photo:'Photo / vidéo',feeling:'Humeur',location:'Lieu',contacts:'Contacts',story:'Créer une story',createPost:'Créer une publication',createStory:'Créer une story',publish:'Publier',like:'J’aime',comment:'Commenter',share:'Partager',postCreated:'Publication créée',storyCreated:'Story créée',needText:'Écrivez quelque chose',fillCode:'Entrez les six chiffres',search:'Rechercher'},en:{login:'Sign in to Cardigram',intro:'Choose your country and enter your number.',country:'Country',phone:'Phone number',keep:'Keep me signed in',continue:'Continue',demo:'Prototype: no SMS is sent.',verify:'Verification',validate:'Verify',change:'Change number',profile:'My profile',friends:'Friends',memories:'Memories',saved:'Saved',groups:'Groups',photo:'Photo / video',feeling:'Feeling',location:'Location',contacts:'Contacts',story:'Create story',createPost:'Create post',createStory:'Create story',publish:'Publish',like:'Like',comment:'Comment',share:'Share',postCreated:'Post created',storyCreated:'Story created',needText:'Write something',fillCode:'Enter all six digits',search:'Search'},es:{login:'Iniciar sesión en Cardigram',intro:'Elige tu país e introduce tu número.',country:'País',phone:'Número de teléfono',keep:'Mantener sesión',continue:'Continuar',demo:'Prototipo: no se envía ningún SMS.',verify:'Verificación',validate:'Verificar',change:'Cambiar número',profile:'Mi perfil',friends:'Amigos',memories:'Recuerdos',saved:'Guardado',groups:'Grupos',photo:'Foto / vídeo',feeling:'Estado',location:'Lugar',contacts:'Contactos',story:'Crear historia',createPost:'Crear publicación',createStory:'Crear historia',publish:'Publicar',like:'Me gusta',comment:'Comentar',share:'Compartir',postCreated:'Publicación creada',storyCreated:'Historia creada',needText:'Escribe algo',fillCode:'Introduce los seis dígitos',search:'Buscar'},pt:{login:'Entrar no Cardigram',intro:'Escolha seu país e informe seu número.',country:'País',phone:'Telefone',keep:'Manter conectado',continue:'Continuar',demo:'Protótipo: nenhum SMS é enviado.',verify:'Verificação',validate:'Verificar',change:'Alterar número',profile:'Meu perfil',friends:'Amigos',memories:'Memórias',saved:'Salvos',groups:'Grupos',photo:'Foto / vídeo',feeling:'Sentimento',location:'Local',contacts:'Contatos',story:'Criar story',createPost:'Criar publicação',createStory:'Criar story',publish:'Publicar',like:'Curtir',comment:'Comentar',share:'Compartilhar',postCreated:'Publicação criada',storyCreated:'Story criada',needText:'Escreva algo',fillCode:'Digite seis dígitos',search:'Pesquisar'},ar:{login:'تسجيل الدخول إلى Cardigram',intro:'اختر بلدك وأدخل رقم هاتفك.',country:'البلد',phone:'رقم الهاتف',keep:'ابقني مسجلاً',continue:'متابعة',demo:'نسخة تجريبية: لا يتم إرسال SMS.',verify:'التحقق',validate:'تحقق',change:'تغيير الرقم',profile:'ملفي',friends:'الأصدقاء',memories:'الذكريات',saved:'المحفوظات',groups:'المجموعات',photo:'صورة / فيديو',feeling:'المزاج',location:'المكان',contacts:'جهات الاتصال',story:'إنشاء قصة',createPost:'إنشاء منشور',createStory:'إنشاء قصة',publish:'نشر',like:'إعجاب',comment:'تعليق',share:'مشاركة',postCreated:'تم إنشاء المنشور',storyCreated:'تم إنشاء القصة',needText:'اكتب شيئاً',fillCode:'أدخل الأرقام الستة',search:'بحث'}};
+const lang=document.getElementById('language'),country=document.getElementById('country'),dial=document.getElementById('dial');
+function applyLang(code){const t=T[code]||T.en;document.documentElement.lang=code;document.documentElement.dir=code==='ar'?'rtl':'ltr';document.querySelectorAll('[data-t]').forEach(x=>{if(t[x.dataset.t])x.textContent=t[x.dataset.t]});document.querySelectorAll('.composer-input,.modal textarea').forEach(x=>x.placeholder=t.needText);document.getElementById('global-search').placeholder=t.search}
+lang.addEventListener('change',()=>applyLang(lang.value));applyLang('fr');
+const fallback=[['FR','33','France'],['US','1','United States'],['GB','44','United Kingdom'],['SN','221','Sénégal'],['CI','225','Côte d’Ivoire'],['CM','237','Cameroun'],['TG','228','Togo'],['BJ','229','Bénin'],['DZ','213','Algérie'],['MA','212','Maroc'],['TN','216','Tunisie'],['BE','32','Belgique'],['CH','41','Suisse'],['CA','1','Canada'],['DE','49','Allemagne'],['ES','34','Espagne'],['IT','39','Italie'],['PT','351','Portugal'],['BR','55','Brésil'],['MX','52','Mexique'],['AR','54','Argentine'],['CO','57','Colombie'],['IN','91','Inde'],['CN','86','China'],['JP','81','Japan'],['KR','82','South Korea'],['AU','61','Australia'],['ZA','27','South Africa'],['EG','20','Egypt'],['SA','966','Saudi Arabia'],['AE','971','UAE'],['TR','90','Turkey'],['RU','7','Russia']];
+function loadFallback(){country.innerHTML='';fallback.forEach(x=>{const o=document.createElement('option');o.value=x[0];o.dataset.dial=x[1];o.textContent=`${x[2]} (+${x[1]})`;country.append(o)});updateDial()}function updateDial(){const d=country.selectedOptions[0]?.dataset.dial||'33';dial.innerHTML=`<option>+${d}</option>`}country.addEventListener('change',updateDial);loadFallback();
+fetch('https://cdn.jsdelivr.net/npm/libphonenumber-js@1/bundle/metadata.min.json').then(r=>r.ok?r.json():Promise.reject()).catch(()=>{});
+const auth=document.getElementById('auth'),phoneCard=document.getElementById('phone-card'),codeCard=document.getElementById('code-card'),app=document.getElementById('app');
+document.getElementById('phone-form').addEventListener('submit',e=>{e.preventDefault();const p=document.getElementById('phone').value.trim();if(!p)return;phoneCard.classList.add('hidden');codeCard.classList.remove('hidden');document.getElementById('code-number').textContent=dial.value+' '+p});document.getElementById('change-number').onclick=()=>{codeCard.classList.add('hidden');phoneCard.classList.remove('hidden')};
+const codeInputs=[...document.querySelectorAll('.code-box input')];codeInputs.forEach((x,i)=>{x.addEventListener('input',()=>{x.value=x.value.replace(/\D/g,'');if(x.value&&codeInputs[i+1])codeInputs[i+1].focus()});x.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!x.value&&codeInputs[i-1])codeInputs[i-1].focus()})});document.getElementById('code-form').addEventListener('submit',e=>{e.preventDefault();if(codeInputs.some(x=>!x.value))return showToast(T[lang.value].fillCode);auth.classList.add('hidden');app.classList.remove('hidden');localStorage.setItem('cardigram_session','true')});if(localStorage.getItem('cardigram_session')){auth.classList.add('hidden');app.classList.remove('hidden')}
+const posts=document.getElementById('posts');function makePost(name,text,initial){const t=T[lang.value]||T.en;const el=document.createElement('article');el.className='card-box';el.innerHTML=`<div class="post-header"><div class="avatar">${initial}</div><div class="post-meta"><strong>${name}</strong><small>À l'instant · 🌐</small></div><button class="post-more">•••</button></div><div class="post-text"></div><div class="post-media">Cardigram</div><div class="post-stats"><span>👍 <b class="count">128</b></span><span class="comment-count">24 commentaires</span></div><div class="post-actions"><button class="like">♡ ${t.like}</button><button class="comment-button">○ ${t.comment}</button><button class="share-button">↗ ${t.share}</button></div><div class="comments"></div><div class="comment-row"><div class="avatar">C</div><input placeholder="Écrire un commentaire..."></div>`;el.querySelector('.post-text').textContent=text;el.querySelector('.like').onclick=function(){const liked=this.classList.toggle('liked');this.textContent=(liked?'♥ ':'♡ ')+' '+t.like;const count=el.querySelector('.count');count.textContent=128+(liked?1:0)};el.querySelector('.share-button').onclick=()=>showToast(t.share);el.querySelector('.comment-button').onclick=()=>el.querySelector('.comment-row input').focus();const comment=el.querySelector('.comment-row input');comment.onkeydown=e=>{if(e.key==='Enter'&&comment.value.trim()){const row=document.createElement('div');row.className='comment';row.innerHTML='<div class="avatar">C</div><div class="comment-bubble"></div>';row.querySelector('.comment-bubble').textContent=comment.value.trim();el.querySelector('.comments').append(row);comment.value='';const n=el.querySelector('.comment-count');n.textContent=(parseInt(n.textContent)||0+1)+' commentaires'}};posts.prepend(el)}makePost('Amina','Bienvenue sur Cardigram ! Découvrez, partagez et échangez avec vos amis.','A');
+const modal=document.getElementById('post-modal'),storyModal=document.getElementById('story-modal');function openPost(){modal.classList.remove('hidden')}document.getElementById('open-post').onclick=openPost;document.getElementById('create-short').onclick=openPost;document.getElementById('mobile-create').onclick=openPost;document.getElementById('close-post').onclick=()=>modal.classList.add('hidden');document.getElementById('publish-post').onclick=()=>{const text=document.getElementById('post-text').value.trim();if(!text)return showToast(T[lang.value].needText);makePost('Moi',text,'C');document.getElementById('post-text').value='';modal.classList.add('hidden');showToast(T[lang.value].postCreated)};document.querySelector('.story').onclick=()=>storyModal.classList.remove('hidden');document.getElementById('close-story').onclick=()=>storyModal.classList.add('hidden');document.getElementById('publish-story').onclick=()=>{const text=document.getElementById('story-text').value.trim();if(!text)return showToast(T[lang.value].needText);const s=document.createElement('button');s.className='story';s.innerHTML='<div class="story-avatar">C</div><div class="story-name"></div>';s.querySelector('.story-name').textContent=text;document.querySelector('.stories').append(s);document.getElementById('story-text').value='';storyModal.classList.add('hidden');showToast(T[lang.value].storyCreated)};
+document.getElementById('quick-post').onfocus=openPost;document.getElementById('feeling').onclick=()=>openPost();document.getElementById('location').onclick=()=>openPost();document.getElementById('theme').onclick=()=>document.documentElement.classList.toggle('dark');document.getElementById('notify').onclick=()=>showToast(lang.value==='fr'?'Aucune nouvelle notification':'No new notifications');document.querySelectorAll('.top-tab').forEach(x=>x.onclick=()=>{document.querySelectorAll('.top-tab').forEach(y=>y.classList.remove('active'));x.classList.add('active')});
+function showToast(text){const x=document.getElementById('toast');x.textContent=text;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}
+</script>
+</body></html>
