@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2aabee">
+  <title>Cardigram</title>
+  <style>
+    :root { --blue:#2aabee; --blue-dark:#229ed9; --text:#202124; --muted:#687386; --line:#e7eaf0; --bg:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    .screen { min-height:100vh; display:none; }
+    .screen.active { display:flex; }
+    .auth { align-items:center; justify-content:center; flex-direction:column; padding:24px 20px 40px; }
+    .brand-mark { width:158px; height:158px; margin:0 0 16px; filter:drop-shadow(0 8px 18px rgba(42,171,238,.12)); }
+    h1 { font-size:34px; line-height:1; margin:18px 0 14px; letter-spacing:-.8px; }
+    .subtitle { width:min(420px,100%); min-height:48px; margin:0 0 24px; text-align:center; color:#556170; font-size:17px; line-height:1.45; }
+    .auth-form { width:min(420px,100%); }
+    .field { position:relative; height:74px; margin:10px 0 18px; }
+    .field label { position:absolute; z-index:2; left:13px; top:-7px; padding:0 5px; background:white; color:var(--blue); font-size:13px; }
+    .field input, .field select { width:100%; height:56px; margin-top:12px; padding:0 16px; border:2px solid #55b9f5; border-radius:12px; background:white; color:var(--text); font-size:18px; outline:none; }
+    .field input:focus, .field select:focus { border-color:var(--blue-dark); box-shadow:0 0 0 4px rgba(42,171,238,.12); }
+    .phone-row { display:grid; grid-template-columns:82px 1fr; }
+    .phone-row input:first-child { border-right:0; border-radius:12px 0 0 12px; text-align:center; }
+    .phone-row input:last-child { border-radius:0 12px 12px 0; }
+    .check-row { display:flex; align-items:center; gap:12px; margin:8px 0 24px; }
+    .check-row input { width:22px; height:22px; accent-color:var(--blue); }
+    .check-row span { font-size:17px; }
+    .primary { width:100%; height:52px; border:0; border-radius:12px; background:var(--blue); color:white; font-size:17px; font-weight:700; cursor:pointer; }
+    .primary:active { background:var(--blue-dark); transform:scale(.995); }
+    .link { border:0; background:none; color:var(--blue-dark); font-size:15px; cursor:pointer; }
+    .code-row { display:flex; justify-content:center; gap:10px; }
+    .code-row input { width:54px; height:58px; border:2px solid #55b9f5; border-radius:12px; text-align:center; font-size:24px; outline:none; }
+
+    .app { min-height:100vh; display:none; background:#f6f8fb; }
+    .app.active { display:block; padding-bottom:76px; }
+    .topbar { position:sticky; z-index:10; top:0; height:62px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:white; border-bottom:1px solid var(--line); }
+    .logo-mini { display:flex; align-items:center; gap:9px; color:var(--text); font-size:20px; font-weight:800; }
+    .logo-mini svg { width:38px; height:38px; }
+    .icon-button { width:42px; height:42px; border:0; border-radius:50%; background:#edf6fc; color:var(--blue-dark); font-size:20px; cursor:pointer; }
+    .feed { width:min(560px,100%); margin:0 auto; padding:14px; }
+    .composer, .card { margin-bottom:12px; border-radius:16px; background:white; box-shadow:0 2px 12px rgba(32,33,36,.06); }
+    .composer { display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; padding:12px; }
+    .avatar { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:#e7f5fd; color:var(--blue-dark); font-weight:800; }
+    .composer input { height:44px; border:0; border-radius:22px; padding:0 16px; background:#f3f5f7; outline:none; }
+    .send { width:44px; height:44px; border:0; border-radius:50%; background:var(--blue); color:white; font-size:18px; }
+    .card-header { display:flex; align-items:center; gap:10px; padding:12px 12px 8px; }
+    .card-header div { flex:1; }
+    .card-name { font-weight:800; }
+    .card-time { color:var(--muted); font-size:13px; }
+    .card-body { padding:4px 12px 12px; line-height:1.45; }
+    .card-actions { height:48px; display:flex; align-items:center; gap:6px; border-top:1px solid var(--line); }
+    .action { flex:1; height:100%; border:0; background:white; color:#596579; cursor:pointer; }
+    .action.liked { color:#ef3f76; }
+    .bottom-nav { position:fixed; z-index:20; bottom:0; left:0; right:0; height:68px; display:flex; background:white; border-top:1px solid var(--line); }
+    .nav-item { flex:1; border:0; background:white; color:#7b8492; font-size:11px; cursor:pointer; }
+    .nav-item span { display:block; font-size:21px; margin-bottom:3px; }
+    .nav-item.active { color:var(--blue); }
+    .toast { position:fixed; z-index:50; left:50%; bottom:82px; transform:translate(-50%,20px); padding:12px 18px; border-radius:10px; background:#202124; color:white; opacity:0; pointer-events:none; transition:.25s; }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    @media (min-width:700px) { .brand-mark { width:180px; height:180px; } }
+  </style>
+</head>
+<body>
+  <section class="screen auth active" id="phone-screen">
+    <svg class="brand-mark" viewBox="0 0 240 240" aria-label="Cardigram">
+      <circle cx="120" cy="120" r="112" fill="#2AABEE"/><path d="M58 120c33-15 66-30 112-48 7-3 12 2 10 10l-20 92c-2 8-10 9-16 4l-43-32-21 20c-4 4-7 6-12 5l8-34-18-17Z" fill="#fff"/><path d="M83 140l67-55-48 63-19 9Z" fill="#BFE8FF"/>
+    </svg>
+    <h1>Cardigram</h1>
+    <p class="subtitle">Veuillez confirmer votre pays puis entrer votre numéro de téléphone.</p>
+    <form class="auth-form" id="phone-form">
+      <div class="field">
+        <label for="country">Pays</label>
+        <select id="country"><option value="+33">France</option><option value="+1">États-Unis / Canada</option><option value="+44">Royaume-Uni</option><option value="+221">Sénégal</option><option value="+225">Côte d'Ivoire</option><option value="+228">Togo</option><option value="+237">Cameroun</option><option value="+33">Belgique</option></select>
+      </div>
+      <div class="field">
+        <label for="phone">Votre numéro de téléphone</label>
+        <div class="phone-row"><input id="dial" value="+33" readonly aria-label="Indicatif"><input id="phone" inputmode="tel" autocomplete="tel" placeholder="6 12 34 56 78" required></div>
+      </div>
+      <label class="check-row"><input type="checkbox" checked><span>Rester connecté</span></label>
+      <button class="primary" type="submit">Continuer</button>
+    </form>
+  </section>
+
+  <section class="screen auth" id="code-screen">
+    <svg class="brand-mark" viewBox="0 0 240 240" aria-label="Cardigram"><circle cx="120" cy="120" r="112" fill="#2AABEE"/><path d="M58 120c33-15 66-30 112-48 7-3 12 2 10 10l-20 92c-2 8-10 9-16 4l-43-32-21 20c-4 4-7 6-12 5l8-34-18-17Z" fill="#fff"/><path d="M83 140l67-55-48 63-19 9Z" fill="#BFE8FF"/></svg>
+    <h1>Vérification</h1>
+    <p class="subtitle" id="code-subtitle">Entrez le code de vérification envoyé sur votre téléphone.</p>
+    <form class="auth-form" id="code-form">
+      <div class="code-row">
+        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 1">
+        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 2">
+        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 3">
+        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 4">
+        <input maxlength="1" inputmode="numeric" aria-label="Chiffre 5">
+      </div>
+      <button class="primary" type="submit" style="margin-top:28px">Valider le code</button>
+      <div style="text-align:center;margin-top:16px"><button class="link" type="button" id="back-phone">Modifier le numéro</button></div>
+    </form>
+  </section>
+
+  <main class="app" id="app">
+    <header class="topbar">
+      <div class="logo-mini">
+        <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#2AABEE"/><path d="M14 32c9-4 18-8 31-13 2-1 4 1 3 3l-6 26c-1 2-3 3-5 1l-12-9-6 6c-1 1-2 2-3 2l2-10-5-5Z" fill="#fff"/></svg>
+        Cardigram
+      </div>
+      <button class="icon-button" aria-label="Rechercher">⌕</button>
+    </header>
+    <section class="feed">
+      <div class="composer">
+        <div class="avatar" id="profile-avatar">C</div>
+        <input id="post-input" placeholder="Quoi de neuf ?">
+        <button class="send" id="send-post" aria-label="Publier">➤</button>
+      </div>
+      <article class="card">
+        <div class="card-header"><div class="avatar">M</div><div><div class="card-name">Mina Card</div><div class="card-time">À l'instant</div></div><button class="link">•••</button></div>
+        <div class="card-body">Bienvenue sur Cardigram ! Partagez vos moments préférés avec vos amis.</div>
+        <div class="card-actions"><button class="action like">♡ J'aime</button><button class="action">○ Commenter</button><button class="action">↗ Partager</button></div>
+      </article>
+    </section>
+    <nav class="bottom-nav"><button class="nav-item active"><span>⌂</span>Accueil</button><button class="nav-item"><span>⌕</span>Recherche</button><button class="nav-item"><span>＋</span>Créer</button><button class="nav-item"><span>♧</span>Profil</button></nav>
+  </main>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const phoneScreen = document.getElementById('phone-screen');
+    const codeScreen = document.getElementById('code-screen');
+    const app = document.getElementById('app');
+    const country = document.getElementById('country');
+    const dial = document.getElementById('dial');
+    const toast = document.getElementById('toast');
+
+    country.addEventListener('change', () => { dial.value = country.value; });
+    document.getElementById('phone-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const phone = document.getElementById('phone').value.trim();
+      if (!phone) return;
+      document.getElementById('code-subtitle').textContent = `Entrez le code envoyé au ${dial.value} ${phone}.`;
+      phoneScreen.classList.remove('active'); codeScreen.classList.add('active');
+    });
+    document.getElementById('back-phone').addEventListener('click', () => { codeScreen.classList.remove('active'); phoneScreen.classList.add('active'); });
+
+    const codeInputs = [...document.querySelectorAll('.code-row input')];
+    codeInputs.forEach((input, index) => {
+      input.addEventListener('input', () => { input.value = input.value.replace(/\D/g,''); if (input.value && codeInputs[index+1]) codeInputs[index+1].focus(); });
+      input.addEventListener('keydown', (event) => { if (event.key === 'Backspace' && !input.value && codeInputs[index-1]) codeInputs[index-1].focus(); });
+    });
+    document.getElementById('code-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      codeScreen.classList.remove('active'); app.classList.add('active');
+      localStorage.setItem('cardigram_session', 'verified');
+    });
+
+    if (localStorage.getItem('cardigram_session') === 'verified') { phoneScreen.classList.remove('active'); app.classList.add('active'); }
+
+    document.querySelectorAll('.like').forEach(button => button.addEventListener('click', () => { button.classList.toggle('liked'); button.textContent = button.classList.contains('liked') ? '♥ J’aime' : '♡ J’aime'; }));
+    document.getElementById('send-post').addEventListener('click', () => {
+      const input = document.getElementById('post-input');
+      const text = input.value.trim();
+      if (!text) { showToast('Écrivez quelque chose'); return; }
+      const card = document.createElement('article'); card.className = 'card';
+      card.innerHTML = '<div class="card-header"><div class="avatar">C</div><div><div class="card-name">Vous</div><div class="card-time">À l\'instant</div></div></div><div class="card-body"></div><div class="card-actions"><button class="action like">♡ J\'aime</button><button class="action">○ Commenter</button><button class="action">↗ Partager</button></div>';
+      card.querySelector('.card-body').textContent = text;
+      card.querySelector('.like').addEventListener('click', function(){ this.classList.toggle('liked'); this.textContent = this.classList.contains('liked') ? '♥ J’aime' : '♡ J’aime'; });
+      document.querySelector('.feed').insertBefore(card, document.querySelector('.card'));
+      input.value = ''; showToast('Publication créée');
+    });
+    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); item.classList.add('active'); }));
+    function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800); }
+  </script>
+</body>
+</html>
